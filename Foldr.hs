@@ -113,7 +113,7 @@ Now implement using foldr
 -- >>> all (>0) ([1 .. 20] :: [Int])
 -- True
 all :: (a -> Bool) -> [a] -> Bool
-all p = undefined
+all p = foldr (\ a b -> p a && b) true
 
 testAll :: Test
 testAll =
@@ -151,7 +151,9 @@ Now implement using foldr
 -- >>> last ""
 -- Nothing
 last :: [a] -> Maybe a
-last = undefined
+last = foldr (\ a b -> case b of
+  Nothing -> Just a
+  _ -> b) Nothing
 
 {-
 >
@@ -177,7 +179,7 @@ of the first list for which the input function returns `True`.
 -}
 
 filter :: (a -> Bool) -> [a] -> [a]
-filter p = undefined
+filter p = foldr (\ a b -> if p a then a : b else b) []
 
 testFilter :: Test
 testFilter =
@@ -209,7 +211,7 @@ Now rewrite this function using 'foldr'
 -}
 
 reverse :: [a] -> [a]
-reverse l = undefined
+reverse l = foldr (\ a f rev -> f (a:rev)) id l []
 
 testReverse :: Test
 testReverse =
@@ -248,7 +250,9 @@ Now rewrite using 'foldr'
 -}
 
 intersperse :: a -> [a] -> [a]
-intersperse = undefined
+intersperse x = foldr (\ a b -> case b of
+  [] -> [a]
+  _ -> a : x : b) []
 
 testIntersperse :: Test
 testIntersperse =
@@ -288,7 +292,7 @@ But, you can also define `foldl` in terms of `foldr`. Give it a try.
 -}
 
 foldl :: (b -> a -> b) -> b -> [a] -> b
-foldl f z xs = undefined
+foldl f z xs = foldr (\ a b acc -> b (f acc a)) id xs z
 
 testFoldl :: Test
 testFoldl = foldl (++) "x" ["1", "2", "3"] ~=? "x123"
